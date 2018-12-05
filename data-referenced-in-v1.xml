@@ -1,0 +1,24 @@
+<items>
+    <item type="editor" node="TableNode" vertical="true">
+        <title><![CDATA[Data Referenced IN]]></title>
+        <query>
+            <sql>
+                <![CDATA[
+									  
+select c1.owner||'.'||c1.TABLE_NAME ||'.' || c1.COLUMN_NAME as REFERENCED_FROM, c2.owner||'.'||c2.TABLE_NAME ||'.' || c2.COLUMN_NAME as REFERENCED_TO
+from SYS.ALL_CONS_COLUMNS c1, SYS.ALL_CONS_COLUMNS c2, all_constraints a where c1.CONSTRAINT_NAME=a.CONSTRAINT_NAME and c2.CONSTRAINT_NAME=a.R_CONSTRAINT_NAME
+and c1.owner = a.owner and c2.owner = a.owner and c1.POSITION=c2.POSITION
+and a.constraint_type = 'R' and a.owner = :OBJECT_OWNER
+                            and exists(
+                               select 1
+                               from   all_constraints
+                               where  constraint_name=a.r_constraint_name
+                                      and constraint_type in ('P', 'U')
+                                      and table_name = :OBJECT_NAME 
+                                      and owner = :OBJECT_OWNER);
+									  
+                ]]>
+            </sql>
+        </query>
+    </item>
+</items>
